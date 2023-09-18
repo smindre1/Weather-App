@@ -26,21 +26,24 @@ $("#searchBar").keypress(function (e) {
     }
   }
 });
-//geo fetch
-function locationCoords() {
-  fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${cityName},${stateCode},${countryCode}&limit=${limit}&appid=${APIKey}`)
-    .then((res) => res.json)
-    .then((res) => {
-      console.log(res);
-    });
-
-  //weather fetch
-  let lat = "";
-  let lon = "";
-  fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${APIKey}`)
-    .then((res) => res.json)
-    .then((res) => {
-      console.log(res);
+//geo api fetch
+function locationCoords(input) {
+  const cityName = input;
+  const limit = "1";
+  //   fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${cityName},${stateCode},${countryCode}&limit=${limit}&appid=${APIKey}`)
+  fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=${limit}&appid=${APIKey}`)
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data, "data");
+      const lat = String(data[0].lat);
+      const lon = String(data[0].lon);
+      console.log(lat, "lat", lon, "lon");
+      //weather api fetch
+      fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${APIKey}`)
+        .then((res) => res.json())
+        .then((res) => {
+          console.log(res, "weather data");
+        });
     });
 }
 //then function
