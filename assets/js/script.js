@@ -43,6 +43,54 @@ function locationCoords(input) {
         .then((res) => res.json())
         .then((res) => {
           console.log(res, "weather data");
+          console.log(res.list[0].main.temp);
+          // let cityWeather = {
+          //   city: res.city.name,
+          //   weather: {
+          //     time: res.list[0].main.temp,
+          //   },
+          // };
+          const currentCity = [res.city.name];
+          //local Storage
+          // $("#dayOne").append("<p>test</p>");
+          function dataLog(arrayNumber, location) {
+            // console.log(location);
+            const celsius = Math.round(res.list[arrayNumber].main.temp - 273.15);
+            const fahrenheit = Math.round((res.list[arrayNumber].main.temp - 273.15) * (9 / 5) + 32);
+            // const row = $(`<p>Temp: ${celsius}°C ${fahrenheit}°F</p>`).attr();
+            const time = res.list[arrayNumber].dt_txt;
+            const date = time[5] + time[6] + "/" + time[8] + time[9];
+            $("#" + location).append(`<p>${date}</p>`);
+            const hour = time[11] + time[12];
+            //2023-09-22 03:00:00
+            $("#" + location).append(`<p>Time: ${hour}</p>`);
+            $("#" + location).append(`<p>Temp: ${celsius}°C ${fahrenheit}°F</p>`);
+            // $("#" + location).append(`<p>Temp: ${celsius}°C ${fahrenheit}°F</p>`);
+          }
+          //Catagorizes the Weather API's data into categories
+          let dayContainers = ["todaysWeather", "dayOne", "dayTwo", "dayThree", "dayFour"];
+
+          for (i = 0; i < 40; i++) {
+            if (i < 7) {
+              //finish this part
+            }
+            if (7 <= i && i <= 14) {
+              dataLog(i, dayContainers[1]);
+            }
+            if (15 <= i && i <= 22) {
+              dataLog(i, dayContainers[2]);
+            }
+            if (23 <= i && i <= 30) {
+              dataLog(i, dayContainers[3]);
+            }
+            if (31 <= i && i <= 39) {
+              dataLog(i, dayContainers[4]);
+            }
+          }
+
+          //Function array data
+          //Function to display data elements
+          //Needed Data: city name, the date, an icon representation of weather conditions, the temperature, the humidity, and the wind speed
         });
     });
 }
