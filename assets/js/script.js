@@ -44,50 +44,58 @@ function locationCoords(input) {
         .then((res) => {
           console.log(res, "weather data");
           console.log(res.list[0].main.temp);
-          // let cityWeather = {
-          //   city: res.city.name,
-          //   weather: {
-          //     time: res.list[0].main.temp,
-          //   },
-          // };
+
           const currentCity = [res.city.name];
           //local Storage
           // $("#dayOne").append("<p>test</p>");
+
           function dataLog(arrayNumber, location) {
-            // console.log(location);
             const celsius = Math.round(res.list[arrayNumber].main.temp - 273.15);
             const fahrenheit = Math.round((res.list[arrayNumber].main.temp - 273.15) * (9 / 5) + 32);
-            // const row = $(`<p>Temp: ${celsius}°C ${fahrenheit}°F</p>`).attr();
             const time = res.list[arrayNumber].dt_txt;
-            const date = time[5] + time[6] + "/" + time[8] + time[9];
-            $("#" + location).append(`<p>${date}</p>`);
-            const hour = time[11] + time[12];
-            //2023-09-22 03:00:00
-            $("#" + location).append(`<p>Time: ${hour}</p>`);
-            $("#" + location).append(`<p>Temp: ${celsius}°C ${fahrenheit}°F</p>`);
-            // $("#" + location).append(`<p>Temp: ${celsius}°C ${fahrenheit}°F</p>`);
-          }
-          //Catagorizes the Weather API's data into categories
-          let dayContainers = ["todaysWeather", "dayOne", "dayTwo", "dayThree", "dayFour"];
-
-          for (i = 0; i < 40; i++) {
-            if (i < 7) {
-              //finish this part
+            let hour = (time[11] + time[12]) / 12;
+            let newHour = "";
+            if (hour < 1 && 0 < hour) {
+              newHour = hour * 12 + "AM";
             }
-            if (7 <= i && i <= 14) {
+            if (hour == 01) {
+              newHour = "12PM";
+            }
+            if (hour == 00) {
+              newHour = "12AM";
+            }
+            if (hour > 1) {
+              newHour = (hour - 1) * 12 + "PM";
+            }
+            $("#" + location).append(`<p>Time: ${newHour}</p>`);
+            $("#" + location).append(`<p>Temp: ${celsius}°C ${fahrenheit}°F</p>`);
+          }
+          //Catagorizes the Weather API's data by the html <div> tags
+          let dayContainers = ["todaysWeather", "dayOne", "dayTwo", "dayThree", "dayFour"];
+          //Adds the date to each day's weather data
+          for (i = 0; i < 5; i++) {
+            const days = [0, 8, 16, 24, 32];
+            const time = res.list[days[i]].dt_txt;
+            const date = time[5] + time[6] + "/" + time[8] + time[9];
+            $("#" + dayContainers[i]).append(`<p>${date}</p>`);
+          }
+          for (i = 0; i < 40; i++) {
+            if (i < 8) {
+              dataLog(i, dayContainers[0]);
+            }
+            if (8 <= i && i <= 15) {
               dataLog(i, dayContainers[1]);
             }
-            if (15 <= i && i <= 22) {
+            if (16 <= i && i <= 23) {
               dataLog(i, dayContainers[2]);
             }
-            if (23 <= i && i <= 30) {
+            if (24 <= i && i <= 31) {
               dataLog(i, dayContainers[3]);
             }
-            if (31 <= i && i <= 39) {
+            if (32 <= i && i <= 39) {
               dataLog(i, dayContainers[4]);
             }
           }
-
           //Function array data
           //Function to display data elements
           //Needed Data: city name, the date, an icon representation of weather conditions, the temperature, the humidity, and the wind speed

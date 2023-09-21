@@ -1,0 +1,9 @@
+.dayTables {
+  display: flex;
+  flex: row;
+}
+
+.individualTables {
+    margin: 10px;
+    padding-right: 30px;
+}
