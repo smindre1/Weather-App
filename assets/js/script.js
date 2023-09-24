@@ -75,7 +75,7 @@ function locationCoords(input) {
             const days = [0, 8, 16, 24, 32];
             const time = res.list[days[i]].dt_txt;
             const date = time[5] + time[6] + "/" + time[8] + time[9];
-            $("#" + dayContainers[i]).append(`<p>${date}</p>`);
+            $("#" + dayContainers[i]).append(`<p class=dates>${date}</p>`);
           }
           for (i = 0; i < 40; i++) {
             if (i < 8) {
