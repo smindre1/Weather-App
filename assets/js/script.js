@@ -7,6 +7,7 @@ const APIKey = "4c58e25ed978176bdd5f665c64121ffb";
 //input event listener
 $("#submitBtn").on("click", function () {
   let input = $("#searchBar").val();
+  //Include a local Storage Function
   for (i = 0; i < input.length; i++) {
     if (input[i] === " ") {
       input = input.replaceAll(" ", "+");
@@ -18,6 +19,7 @@ $("#submitBtn").on("click", function () {
 $("#searchBar").keypress(function (e) {
   if (e == 13) {
     let input = $("#searchBar").val();
+    //Include a local Storage Function
     for (i = 0; i < input.length; i++) {
       if (input[i] === " ") {
         input = input.replaceAll(" ", "+");
@@ -47,8 +49,6 @@ function locationCoords(input) {
 
           const currentCity = [res.city.name];
           $("#cityName").append(`${currentCity}`);
-          //local Storage
-          // $("#dayOne").append("<p>test</p>");
 
           function dataLog(arrayNumber, location) {
             const time = res.list[arrayNumber].dt_txt;
@@ -66,7 +66,7 @@ function locationCoords(input) {
             if (hour > 1) {
               newHour = (hour - 1) * 12 + "PM";
             }
-            $("#" + location).append(`<p>Time: ${newHour}</p>`);
+            $("#" + location).append(`<p class=hourDisplay>${newHour}</p>`);
           }
           //Catagorizes the Weather API's data by the html <div> tags
           let dayContainers = ["todaysWeather", "dayOne", "dayTwo", "dayThree", "dayFour"];
@@ -78,24 +78,35 @@ function locationCoords(input) {
             $("#" + dayContainers[i]).append(`<p class=dates>${date}</p>`);
           }
           for (i = 0; i < 40; i++) {
+            const location = `unitInstance${i}`;
             if (i < 8) {
-              dataLog(i, dayContainers[0]);
-              weatherConditions(i, dayContainers[0]);
+              $("#" + dayContainers[0]).append(`<div id=unitInstance${i} class=unitInstance></div>`);
+              dataLog(i, location);
+              $("#" + location).append(`<div id=weatherDataNum${i} class=weatherLogs></div>`);
+              weatherConditions(i, dayContainers[0]); //
             }
             if (8 <= i && i <= 15) {
-              dataLog(i, dayContainers[1]);
+              $("#" + dayContainers[1]).append(`<div id=unitInstance${i} class=unitInstance></div>`);
+              dataLog(i, location);
+              $("#" + location).append(`<div id=weatherDataNum${i} class=weatherLogs></div>`);
               weatherConditions(i, dayContainers[1]);
             }
             if (16 <= i && i <= 23) {
-              dataLog(i, dayContainers[2]);
+              $("#" + dayContainers[2]).append(`<div id=unitInstance${i} class=unitInstance></div>`);
+              dataLog(i, location);
+              $("#" + location).append(`<div id=weatherDataNum${i} class=weatherLogs></div>`);
               weatherConditions(i, dayContainers[2]);
             }
             if (24 <= i && i <= 31) {
-              dataLog(i, dayContainers[3]);
+              $("#" + dayContainers[3]).append(`<div id=unitInstance${i} class=unitInstance></div>`);
+              dataLog(i, location);
+              $("#" + location).append(`<div id=weatherDataNum${i} class=weatherLogs></div>`);
               weatherConditions(i, dayContainers[3]);
             }
             if (32 <= i && i <= 39) {
-              dataLog(i, dayContainers[4]);
+              $("#" + dayContainers[4]).append(`<div id=unitInstance${i} class=unitInstance></div>`);
+              dataLog(i, location);
+              $("#" + location).append(`<div id=weatherDataNum${i} class=weatherLogs></div>`);
               weatherConditions(i, dayContainers[4]);
             }
           }
@@ -107,17 +118,17 @@ function locationCoords(input) {
             // $("#" + location).append(
             //   `<img src=https://openweathermap.org/img/wn/${weatherIconCode}@2x.png alt=${imageAlt}> (${weatherDescription})</img>`
             // );
-            $("#" + location).append(`<img src=https://openweathermap.org/img/w/${weatherIconCode}.png alt=${imageAlt}> (${weatherDescription})</img>`);
+            $("#weatherDataNum" + i).append(`<img src=https://openweathermap.org/img/w/${weatherIconCode}.png alt=${imageAlt}> (${weatherDescription})</img>`);
             //temp
             const celsius = Math.round(res.list[i].main.temp - 273.15);
             const fahrenheit = Math.round((res.list[i].main.temp - 273.15) * (9 / 5) + 32);
-            $("#" + location).append(`<p>Temp: ${celsius}°C ${fahrenheit}°F</p>`);
+            $("#weatherDataNum" + i).append(`<p>Temp: ${celsius}°C ${fahrenheit}°F</p>`);
             //wind speed
             const windSpeed = res.list[i].wind.speed;
-            $("#" + location).append(`<p>Wind: ${windSpeed} MPH</p>`);
+            $("#weatherDataNum" + i).append(`<p>Wind: ${windSpeed} MPH</p>`);
             //humidity
             const humidity = res.list[i].main.humidity;
-            $("#" + location).append(`<p>Humidity: ${humidity} %</p>`);
+            $("#weatherDataNum" + i).append(`<p>Humidity: ${humidity} %</p>`);
           }
 
           //Function array data
