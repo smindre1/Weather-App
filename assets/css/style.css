@@ -90,3 +90,10 @@ img {
   display: flex;
   align-items: center;
 }
+
+#searchHistory {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  justify-content:start;
+}

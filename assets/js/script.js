@@ -7,6 +7,7 @@ const APIKey = "4c58e25ed978176bdd5f665c64121ffb";
 //input event listener
 $("#submitBtn").on("click", function () {
   let input = $("#searchBar").val();
+  resetPage();
   searchHistory(input);
   //Include a local Storage Function
   for (i = 0; i < input.length; i++) {
@@ -141,17 +142,51 @@ function locationCoords(input) {
 
 function searchHistory(userSearch) {
   let weatherSearchHistory = JSON.parse(localStorage.getItem("weatherSearch"));
+  let newSearch = false;
   if (weatherSearchHistory === null) {
     weatherSearchHistory = [];
   }
-  weatherSearchHistory.push(userSearch); //it's not an array?
+  for (i = 0; weatherSearchHistory.length >= i; i++) {
+    if (weatherSearchHistory[i] == userSearch) {
+      newSearch = true;
+    }
+  }
+  if (newSearch == false) {
+    weatherSearchHistory.push(userSearch);
+  }
   if (weatherSearchHistory.length > 7) {
     weatherSearchHistory.splice(0, 1);
   }
   localStorage.setItem("weatherSearch", JSON.stringify(weatherSearchHistory));
+  //Creates the button list of previous searches.
+  for (i = 0; weatherSearchHistory.length > i; i++) {
+    let search = weatherSearchHistory[i];
+    $("#searchHistory").append(`<button id=button${i}>${search}</button>`);
+    $("#button" + i).on("click", function () {
+      let input = $(this).html();
+      resetPage();
+      searchHistory(input);
+      for (i = 0; i < input.length; i++) {
+        if (input[i] === " ") {
+          input = input.replaceAll(" ", "+");
+        }
+      }
+      locationCoords(input);
+    });
+  }
 }
-//then function
 
-//
+function resetPage() {
+  let dayContainers = ["todaysWeather", "dayOne", "dayTwo", "dayThree", "dayFour"];
+  //Resets the city name title.
+  $("#cityName").html("");
+  //Empties the weather data for previous location search.
+  for (i = 0; dayContainers.length > i; i++) {
+    let resetTarget = $("#" + dayContainers[i]);
+    resetTarget.empty();
+  }
+  //Empties search history section.
+  $("#searchHistory").empty();
+}
 
 //
