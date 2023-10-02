@@ -7,6 +7,7 @@ const APIKey = "4c58e25ed978176bdd5f665c64121ffb";
 //input event listener
 $("#submitBtn").on("click", function () {
   let input = $("#searchBar").val();
+  searchHistory(input);
   //Include a local Storage Function
   for (i = 0; i < input.length; i++) {
     if (input[i] === " ") {
@@ -33,7 +34,7 @@ function locationCoords(input) {
   const cityName = input;
   const limit = "1";
   //   fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${cityName},${stateCode},${countryCode}&limit=${limit}&appid=${APIKey}`)
-  fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=${limit}&appid=${APIKey}`)
+  fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=${limit}&appid=${APIKey}`)
     .then((res) => res.json())
     .then((data) => {
       console.log(data, "data");
@@ -112,13 +113,13 @@ function locationCoords(input) {
           }
           function weatherConditions(i, location) {
             //weather conditions
-            const weatherDescription = res.list[i].weather[0].description;
+            let weatherDescription = res.list[i].weather[0].description;
             const weatherIconCode = res.list[i].weather[0].icon;
             const imageAlt = res.list[i].weather[0].main;
-            // $("#" + location).append(
-            //   `<img src=https://openweathermap.org/img/wn/${weatherIconCode}@2x.png alt=${imageAlt}> (${weatherDescription})</img>`
-            // );
-            $("#weatherDataNum" + i).append(`<img src=https://openweathermap.org/img/w/${weatherIconCode}.png alt=${imageAlt}> (${weatherDescription})</img>`);
+
+            $("#weatherDataNum" + i).append(
+              `<div class=weatherIconAndLabel><img src=https://openweathermap.org/img/w/${weatherIconCode}.png alt=${imageAlt}> <p>(${weatherDescription})</p></div>`
+            );
             //temp
             const celsius = Math.round(res.list[i].main.temp - 273.15);
             const fahrenheit = Math.round((res.list[i].main.temp - 273.15) * (9 / 5) + 32);
@@ -137,8 +138,20 @@ function locationCoords(input) {
         });
     });
 }
+
+function searchHistory(userSearch) {
+  let weatherSearchHistory = JSON.parse(localStorage.getItem("weatherSearch"));
+  if (weatherSearchHistory === null) {
+    weatherSearchHistory = [];
+  }
+  weatherSearchHistory.push(userSearch); //it's not an array?
+  if (weatherSearchHistory.length > 7) {
+    weatherSearchHistory.splice(0, 1);
+  }
+  localStorage.setItem("weatherSearch", JSON.stringify(weatherSearchHistory));
+}
 //then function
 
-//local storage function
+//
 
 //
