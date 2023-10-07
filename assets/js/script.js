@@ -16,6 +16,8 @@ $("#submitBtn").on("click", function () {
     }
   }
   locationCoords(input);
+  //Edit this function...
+  currentWeather(input);
 });
 //Fix the enter key event listener
 $("#searchBar").keypress(function (e) {
@@ -189,4 +191,29 @@ function resetPage() {
   $("#searchHistory").empty();
 }
 
-//
+function currentWeather(input) {
+  //Change this into a function so I dont need two geo fetches...
+  const cityName = input;
+  const limit = "1";
+  fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=${limit}&appid=${APIKey}`)
+    .then((res) => res.json())
+    .then((data) => {
+      const lat = String(data[0].lat);
+      const lon = String(data[0].lon);
+      fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${APIKey}`)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data, "Todays Weathr Data");
+        });
+    });
+}
+
+//New fetch links:
+
+/*
+https://openweathermap.org/current
+
+API URL for current times weather
+https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
+
+*/
