@@ -4,11 +4,14 @@ const APIKey = "4c58e25ed978176bdd5f665c64121ffb";
 //Make 404 check
 //Make a bad search error alert
 
+searchHistoryButtons();
+
 //Input event listener
 $("#submitBtn").on("click", function () {
   let input = $("#searchBar").val();
   resetPage();
-  searchHistory(input);
+  storeSearchHistory(input);
+  searchHistoryButtons();
   locationCoords(input);
 });
 
@@ -144,7 +147,8 @@ function futureWeather(lat, lon) {
     });
 }
 
-function searchHistory(userSearch) {
+//Stores the User's search into local storage
+function storeSearchHistory(userSearch) {
   let weatherSearchHistory = JSON.parse(localStorage.getItem("weatherSearch"));
   let newSearch = false;
   if (weatherSearchHistory === null) {
@@ -162,20 +166,26 @@ function searchHistory(userSearch) {
     weatherSearchHistory.splice(0, 1);
   }
   localStorage.setItem("weatherSearch", JSON.stringify(weatherSearchHistory));
-  //Creates the button list of previous searches.
+}
+
+//Creates a button list of previous searches.
+function searchHistoryButtons() {
+  let weatherSearchHistory = JSON.parse(localStorage.getItem("weatherSearch"));
   for (i = 0; weatherSearchHistory.length > i; i++) {
     let search = weatherSearchHistory[i];
     $("#searchHistory").append(`<button id=button${i}>${search}</button>`);
     $("#button" + i).on("click", function () {
       let input = $(this).html();
+      console.log(input, "input");
       resetPage();
-      searchHistory(input);
+      storeSearchHistory(input);
       for (i = 0; i < input.length; i++) {
         if (input[i] === " ") {
           input = input.replaceAll(" ", "+");
         }
       }
       locationCoords(input);
+      searchHistoryButtons();
     });
   }
 }
@@ -203,6 +213,7 @@ function currentWeather(lat, lon) {
   fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${APIKey}`)
     .then((res) => res.json())
     .then((data) => {
+      $("#currentDayDisplay").removeClass("hidden");
       console.log(data, "Today's Weather Data");
       // $("#todaysWeather").append(`<div id=${location} class=unitInstance></div>`);
       //Date
@@ -218,7 +229,6 @@ function currentWeather(lat, lon) {
         `<div class="weatherIconAndLabel mainIconAndLabel"><img src=https://openweathermap.org/img/w/${weatherIconCode}.png alt=${imageAlt}> <p>(${weatherDescription})</p></div>`
       );
       //Temperature
-      console.log(data.main.temp, "temp");
       const celsius = Math.round(data.main.temp - 273.15);
       const fahrenheit = Math.round((data.main.temp - 273.15) * (9 / 5) + 32);
       $("#todaysWeather").append(`<div><p class="todaysTemperature marginAdjustment">${celsius}°C ${fahrenheit}°F</p></div>`);
