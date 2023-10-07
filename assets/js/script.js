@@ -192,6 +192,11 @@ function resetPage() {
   }
   //Empties search history section.
   $("#searchHistory").empty();
+
+  //Empties main display.
+  $("#todaysWeather").empty();
+  $("#todaysDate").html("");
+  $("#alignCircle").html("");
 }
 
 function currentWeather(lat, lon) {
@@ -203,28 +208,25 @@ function currentWeather(lat, lon) {
       //Date
       const currentDate = new Date();
       const printDate = currentDate.getMonth() + 1 + "/" + currentDate.getDate();
-      $("#currentDayDisplay").append(`<p id=todaysDate>${printDate}</p>`);
+      $("#todaysDate").append(`${printDate}`);
+      $("#alignCircle").append(`${printDate}`);
       //Icon
       const weatherIconCode = data.weather[0].icon;
       const imageAlt = data.weather[0].main;
       const weatherDescription = data.weather[0].description;
       $("#todaysWeather").append(
-        `<div class=weatherIconAndLabel><img src=https://openweathermap.org/img/w/${weatherIconCode}.png alt=${imageAlt}> <p>(${weatherDescription})</p></div>`
+        `<div class="weatherIconAndLabel mainIconAndLabel"><img src=https://openweathermap.org/img/w/${weatherIconCode}.png alt=${imageAlt}> <p>(${weatherDescription})</p></div>`
       );
       //Temperature
       console.log(data.main.temp, "temp");
       const celsius = Math.round(data.main.temp - 273.15);
       const fahrenheit = Math.round((data.main.temp - 273.15) * (9 / 5) + 32);
-      $("#todaysWeather").append(`<div><p>${celsius}°C ${fahrenheit}°F</p></div>`);
+      $("#todaysWeather").append(`<div><p class="todaysTemperature marginAdjustment">${celsius}°C ${fahrenheit}°F</p></div>`);
       //Humidity
       const humidity = data.main.humidity;
-      $("#todaysWeather").append(`<p>${humidity}%</p>`);
+      $("#todaysWeather").append(`<p>Humidity: ${humidity}%</p>`);
       //Wind Speed
       const windSpeed = data.wind.speed;
-      $("#todaysWeather").append(`<p>${windSpeed} MPH</p>`);
+      $("#todaysWeather").append(`<p class=marginAdjustment>Wind: ${windSpeed} MPH</p>`);
     });
 }
-
-/*edit the div container id's and add a new div container for currentWeather. Make sure to append
-the resetPage function to reset this new div container too.
-*/

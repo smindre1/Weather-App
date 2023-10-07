@@ -110,11 +110,37 @@ img {
 
 .todaysWeatherData {
   background-color: aliceblue;
-  border-radius: 80px;
-  width: 150px;
-  height: 150px;
+  border-radius: 100px;
+  width: 200px;
+  height: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-#todaysDate {
-  position: float;
+.todaysDate {
+  margin-left: 5%;
+  font-size: 70px;
+  font-weight: 600;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.todaysTemperature {
+  font-size: 32px;
+  font-weight: 600;
+  color: black;
+}
+
+.mainIconAndLabel {
+  flex-direction: column;
+}
+
+.marginAdjustment {
+  margin-bottom: 10px;
 }
