@@ -1,29 +1,21 @@
 //Variables
-
 const APIKey = "4c58e25ed978176bdd5f665c64121ffb";
 
-//404 check
+//Make 404 check
+//Make a bad search error alert
 
-//input event listener
+//Input event listener
 $("#submitBtn").on("click", function () {
   let input = $("#searchBar").val();
   resetPage();
   searchHistory(input);
-  //Include a local Storage Function
-  for (i = 0; i < input.length; i++) {
-    if (input[i] === " ") {
-      input = input.replaceAll(" ", "+");
-    }
-  }
   locationCoords(input);
-  //Edit this function...
-  currentWeather(input);
 });
+
 //Fix the enter key event listener
 $("#searchBar").keypress(function (e) {
   if (e == 13) {
     let input = $("#searchBar").val();
-    //Include a local Storage Function
     for (i = 0; i < input.length; i++) {
       if (input[i] === " ") {
         input = input.replaceAll(" ", "+");
@@ -32,113 +24,123 @@ $("#searchBar").keypress(function (e) {
     }
   }
 });
-//geo api fetch
+
+//This function grabs the coordinates of the User's city search and uses them to call functions for the current and forecasted weather.
 function locationCoords(input) {
+  //Adjust the User's search to fit in the API url.
+  for (i = 0; i < input.length; i++) {
+    if (input[i] === " ") {
+      input = input.replaceAll(" ", "+");
+    }
+  }
   const cityName = input;
   const limit = "1";
-  //   fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${cityName},${stateCode},${countryCode}&limit=${limit}&appid=${APIKey}`)
+  //Geo API fetch request
+  //fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${cityName},${stateCode},${countryCode}&limit=${limit}&appid=${APIKey}`)
   fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=${limit}&appid=${APIKey}`)
     .then((res) => res.json())
     .then((data) => {
-      console.log(data, "data");
+      //Takes the latitude and longitude data from the fetch request and assigns them.
       const lat = String(data[0].lat);
       const lon = String(data[0].lon);
-      console.log(lat, "lat", lon, "lon");
-      //weather api fetch
-      fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${APIKey}`)
-        .then((res) => res.json())
-        .then((res) => {
-          console.log(res, "weather data");
-          console.log(res.list[0].main.temp);
+      //Calls the weather functions
+      currentWeather(lat, lon);
+      futureWeather(lat, lon);
+    });
+}
 
-          const currentCity = [res.city.name];
-          $("#cityName").append(`${currentCity}`);
+//Gathers and filters the forecast data of the User's searches city to be appended to the webpage.
+function futureWeather(lat, lon) {
+  //Forecast API fetch request.
+  fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${APIKey}`)
+    .then((res) => res.json())
+    .then((res) => {
+      console.log(res, "Forecat Data");
 
-          function dataLog(arrayNumber, location) {
-            const time = res.list[arrayNumber].dt_txt;
-            let hour = (time[11] + time[12]) / 12;
-            let newHour = "";
-            if (hour < 1 && 0 < hour) {
-              newHour = hour * 12 + "AM";
-            }
-            if (hour == 01) {
-              newHour = "12PM";
-            }
-            if (hour == 00) {
-              newHour = "12AM";
-            }
-            if (hour > 1) {
-              newHour = (hour - 1) * 12 + "PM";
-            }
-            $("#" + location).append(`<p class=hourDisplay>${newHour}</p>`);
-          }
-          //Catagorizes the Weather API's data by the html <div> tags
-          let dayContainers = ["todaysWeather", "dayOne", "dayTwo", "dayThree", "dayFour"];
-          //Adds the date to each day's weather data
-          for (i = 0; i < 5; i++) {
-            const days = [0, 8, 16, 24, 32];
-            const time = res.list[days[i]].dt_txt;
-            const date = time[5] + time[6] + "/" + time[8] + time[9];
-            $("#" + dayContainers[i]).append(`<p class=dates>${date}</p>`);
-          }
-          for (i = 0; i < 40; i++) {
-            const location = `unitInstance${i}`;
-            if (i < 8) {
-              $("#" + dayContainers[0]).append(`<div id=unitInstance${i} class=unitInstance></div>`);
-              dataLog(i, location);
-              $("#" + location).append(`<div id=weatherDataNum${i} class=weatherLogs></div>`);
-              weatherConditions(i, dayContainers[0]); //
-            }
-            if (8 <= i && i <= 15) {
-              $("#" + dayContainers[1]).append(`<div id=unitInstance${i} class=unitInstance></div>`);
-              dataLog(i, location);
-              $("#" + location).append(`<div id=weatherDataNum${i} class=weatherLogs></div>`);
-              weatherConditions(i, dayContainers[1]);
-            }
-            if (16 <= i && i <= 23) {
-              $("#" + dayContainers[2]).append(`<div id=unitInstance${i} class=unitInstance></div>`);
-              dataLog(i, location);
-              $("#" + location).append(`<div id=weatherDataNum${i} class=weatherLogs></div>`);
-              weatherConditions(i, dayContainers[2]);
-            }
-            if (24 <= i && i <= 31) {
-              $("#" + dayContainers[3]).append(`<div id=unitInstance${i} class=unitInstance></div>`);
-              dataLog(i, location);
-              $("#" + location).append(`<div id=weatherDataNum${i} class=weatherLogs></div>`);
-              weatherConditions(i, dayContainers[3]);
-            }
-            if (32 <= i && i <= 39) {
-              $("#" + dayContainers[4]).append(`<div id=unitInstance${i} class=unitInstance></div>`);
-              dataLog(i, location);
-              $("#" + location).append(`<div id=weatherDataNum${i} class=weatherLogs></div>`);
-              weatherConditions(i, dayContainers[4]);
-            }
-          }
-          function weatherConditions(i, location) {
-            //weather conditions
-            let weatherDescription = res.list[i].weather[0].description;
-            const weatherIconCode = res.list[i].weather[0].icon;
-            const imageAlt = res.list[i].weather[0].main;
+      const currentCity = [res.city.name];
+      $("#cityName").append(`${currentCity}`);
 
-            $("#weatherDataNum" + i).append(
-              `<div class=weatherIconAndLabel><img src=https://openweathermap.org/img/w/${weatherIconCode}.png alt=${imageAlt}> <p>(${weatherDescription})</p></div>`
-            );
-            //temp
-            const celsius = Math.round(res.list[i].main.temp - 273.15);
-            const fahrenheit = Math.round((res.list[i].main.temp - 273.15) * (9 / 5) + 32);
-            $("#weatherDataNum" + i).append(`<p>Temp: ${celsius}°C ${fahrenheit}°F</p>`);
-            //wind speed
-            const windSpeed = res.list[i].wind.speed;
-            $("#weatherDataNum" + i).append(`<p>Wind: ${windSpeed} MPH</p>`);
-            //humidity
-            const humidity = res.list[i].main.humidity;
-            $("#weatherDataNum" + i).append(`<p>Humidity: ${humidity} %</p>`);
-          }
+      function dataLog(arrayNumber, location) {
+        const time = res.list[arrayNumber].dt_txt;
+        let hour = (time[11] + time[12]) / 12;
+        let newHour = "";
+        if (hour < 1 && 0 < hour) {
+          newHour = hour * 12 + "AM";
+        }
+        if (hour == 01) {
+          newHour = "12PM";
+        }
+        if (hour == 00) {
+          newHour = "12AM";
+        }
+        if (hour > 1) {
+          newHour = (hour - 1) * 12 + "PM";
+        }
+        $("#" + location).append(`<p class=hourDisplay>${newHour}</p>`);
+      }
+      //Catagorizes the Weather API's data by the html <div> tags
+      let dayContainers = ["todaysWeather", "dayOne", "dayTwo", "dayThree", "dayFour"];
+      //Adds the date to each day's weather data
+      for (i = 0; i < 5; i++) {
+        const days = [0, 8, 16, 24, 32];
+        const time = res.list[days[i]].dt_txt;
+        const date = time[5] + time[6] + "/" + time[8] + time[9];
+        $("#" + dayContainers[i]).append(`<p class=dates>${date}</p>`);
+      }
+      for (i = 0; i < 40; i++) {
+        const location = `unitInstance${i}`;
+        if (i < 8) {
+          $("#" + dayContainers[0]).append(`<div id=${location} class=unitInstance></div>`);
+          dataLog(i, location);
+          $("#" + location).append(`<div id=weatherDataNum${i} class=weatherLogs></div>`);
+          weatherConditions(i);
+        }
+        if (8 <= i && i <= 15) {
+          $("#" + dayContainers[1]).append(`<div id=${location} class=unitInstance></div>`);
+          dataLog(i, location);
+          $("#" + location).append(`<div id=weatherDataNum${i} class=weatherLogs></div>`);
+          weatherConditions(i);
+        }
+        if (16 <= i && i <= 23) {
+          $("#" + dayContainers[2]).append(`<div id=${location} class=unitInstance></div>`);
+          dataLog(i, location);
+          $("#" + location).append(`<div id=weatherDataNum${i} class=weatherLogs></div>`);
+          weatherConditions(i);
+        }
+        if (24 <= i && i <= 31) {
+          $("#" + dayContainers[3]).append(`<div id=${location} class=unitInstance></div>`);
+          dataLog(i, location);
+          $("#" + location).append(`<div id=weatherDataNum${i} class=weatherLogs></div>`);
+          weatherConditions(i);
+        }
+        if (32 <= i && i <= 39) {
+          $("#" + dayContainers[4]).append(`<div id=${location} class=unitInstance></div>`);
+          dataLog(i, location);
+          $("#" + location).append(`<div id=weatherDataNum${i} class=weatherLogs></div>`);
+          weatherConditions(i);
+        }
+      }
 
-          //Function array data
-          //Function to display data elements
-          //Needed Data: city name, the date, an icon representation of weather conditions, the temperature, the humidity, and the wind speed
-        });
+      function weatherConditions(i) {
+        //Weather conditions
+        let weatherDescription = res.list[i].weather[0].description;
+        const weatherIconCode = res.list[i].weather[0].icon;
+        const imageAlt = res.list[i].weather[0].main;
+
+        $("#weatherDataNum" + i).append(
+          `<div class=weatherIconAndLabel><img src=https://openweathermap.org/img/w/${weatherIconCode}.png alt=${imageAlt}> <p>(${weatherDescription})</p></div>`
+        );
+        //Temperature
+        const celsius = Math.round(res.list[i].main.temp - 273.15);
+        const fahrenheit = Math.round((res.list[i].main.temp - 273.15) * (9 / 5) + 32);
+        $("#weatherDataNum" + i).append(`<p>Temp: ${celsius}°C ${fahrenheit}°F</p>`);
+        //wind speed
+        const windSpeed = res.list[i].wind.speed;
+        $("#weatherDataNum" + i).append(`<p>Wind: ${windSpeed} MPH</p>`);
+        //Humidity
+        const humidity = res.list[i].main.humidity;
+        $("#weatherDataNum" + i).append(`<p>Humidity: ${humidity}%</p>`);
+      }
     });
 }
 
@@ -178,6 +180,7 @@ function searchHistory(userSearch) {
   }
 }
 
+//This resets the previous User's search results to allow room for new search result data.
 function resetPage() {
   let dayContainers = ["todaysWeather", "dayOne", "dayTwo", "dayThree", "dayFour"];
   //Resets the city name title.
@@ -191,29 +194,14 @@ function resetPage() {
   $("#searchHistory").empty();
 }
 
-function currentWeather(input) {
-  //Change this into a function so I dont need two geo fetches...
-  const cityName = input;
-  const limit = "1";
-  fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=${limit}&appid=${APIKey}`)
+function currentWeather(lat, lon) {
+  fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${APIKey}`)
     .then((res) => res.json())
     .then((data) => {
-      const lat = String(data[0].lat);
-      const lon = String(data[0].lon);
-      fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${APIKey}`)
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data, "Todays Weathr Data");
-        });
+      console.log(data, "Today's Weather Data");
+
+      //Function array data
+      //Function to display data elements
+      //Needed Data: city name, the date, an icon representation of weather conditions, the temperature, the humidity, and the wind speed
     });
 }
-
-//New fetch links:
-
-/*
-https://openweathermap.org/current
-
-API URL for current times weather
-https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
-
-*/
