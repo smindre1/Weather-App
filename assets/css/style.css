@@ -96,5 +96,25 @@ img {
   display: flex;
   flex-direction: column;
   position: fixed;
-  justify-content:start;
+  justify-content: start;
+}
+
+.todaysWeather {
+  background-color: darkcyan;
+  border-top: solid;
+  border-bottom: solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.todaysWeatherData {
+  background-color: aliceblue;
+  border-radius: 80px;
+  width: 150px;
+  height: 150px;
+}
+
+#todaysDate {
+  position: float;
 }

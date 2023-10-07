@@ -79,7 +79,7 @@ function futureWeather(lat, lon) {
         $("#" + location).append(`<p class=hourDisplay>${newHour}</p>`);
       }
       //Catagorizes the Weather API's data by the html <div> tags
-      let dayContainers = ["todaysWeather", "dayOne", "dayTwo", "dayThree", "dayFour"];
+      let dayContainers = ["dayOne", "dayTwo", "dayThree", "dayFour", "dayFive"];
       //Adds the date to each day's weather data
       for (i = 0; i < 5; i++) {
         const days = [0, 8, 16, 24, 32];
@@ -182,7 +182,7 @@ function searchHistory(userSearch) {
 
 //This resets the previous User's search results to allow room for new search result data.
 function resetPage() {
-  let dayContainers = ["todaysWeather", "dayOne", "dayTwo", "dayThree", "dayFour"];
+  let dayContainers = ["dayOne", "dayTwo", "dayThree", "dayFour", "dayFive"];
   //Resets the city name title.
   $("#cityName").html("");
   //Empties the weather data for previous location search.
@@ -199,9 +199,32 @@ function currentWeather(lat, lon) {
     .then((res) => res.json())
     .then((data) => {
       console.log(data, "Today's Weather Data");
-
-      //Function array data
-      //Function to display data elements
-      //Needed Data: city name, the date, an icon representation of weather conditions, the temperature, the humidity, and the wind speed
+      // $("#todaysWeather").append(`<div id=${location} class=unitInstance></div>`);
+      //Date
+      const currentDate = new Date();
+      const printDate = currentDate.getMonth() + 1 + "/" + currentDate.getDate();
+      $("#currentDayDisplay").append(`<p id=todaysDate>${printDate}</p>`);
+      //Icon
+      const weatherIconCode = data.weather[0].icon;
+      const imageAlt = data.weather[0].main;
+      const weatherDescription = data.weather[0].description;
+      $("#todaysWeather").append(
+        `<div class=weatherIconAndLabel><img src=https://openweathermap.org/img/w/${weatherIconCode}.png alt=${imageAlt}> <p>(${weatherDescription})</p></div>`
+      );
+      //Temperature
+      console.log(data.main.temp, "temp");
+      const celsius = Math.round(data.main.temp - 273.15);
+      const fahrenheit = Math.round((data.main.temp - 273.15) * (9 / 5) + 32);
+      $("#todaysWeather").append(`<div><p>${celsius}°C ${fahrenheit}°F</p></div>`);
+      //Humidity
+      const humidity = data.main.humidity;
+      $("#todaysWeather").append(`<p>${humidity}%</p>`);
+      //Wind Speed
+      const windSpeed = data.wind.speed;
+      $("#todaysWeather").append(`<p>${windSpeed} MPH</p>`);
     });
 }
+
+/*edit the div container id's and add a new div container for currentWeather. Make sure to append
+the resetPage function to reset this new div container too.
+*/
