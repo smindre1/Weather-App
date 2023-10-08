@@ -14,19 +14,21 @@
     <header>
         <h1>Weather App</h1>
     </header>
+    <!-- Search Bar -->
     <section class="userSearchDisplay">
         <input id="searchBar"></input>
         <button id="submitBtn" >Submit</button>
     </section>
-    <!-- <footer>Made By Shane Mindreau</footer> -->
     <h2 id="cityName"></h2>
-    <section id="searchHistory">
-    </section>
+    <!-- Button List of User's Prior Searches -->
+    <section id="searchHistory"></section>
+    <!-- Display's the Current Day's Weather -->
     <section id="currentDayDisplay" class="todaysWeather hidden">
         <p id="todaysDate" class="todaysDate" ></p>
         <div id="todaysWeather" class="todaysWeatherData"></div>
         <p id="alignCircle" class="hidden todaysDate"></p>
     </section>
+    <!-- Display's the Weather Forecast for the Next Five Days -->
     <section class="dayTables">
         <div id="dayOne" class="individualTables"></div>
         <div id="dayTwo" class="individualTables"></div>

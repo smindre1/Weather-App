@@ -1,9 +1,6 @@
 //Variables
 const APIKey = "4c58e25ed978176bdd5f665c64121ffb";
 
-//Make 404 check
-//Make a bad search error alert
-
 searchHistoryButtons();
 
 //Input event listener
@@ -16,6 +13,7 @@ $("#submitBtn").on("click", function () {
 });
 
 //Fix the enter key event listener
+/*
 $("#searchBar").keypress(function (e) {
   if (e == 13) {
     let input = $("#searchBar").val();
@@ -27,6 +25,7 @@ $("#searchBar").keypress(function (e) {
     }
   }
 });
+*/
 
 //This function grabs the coordinates of the User's city search and uses them to call functions for the current and forecasted weather.
 function locationCoords(input) {
@@ -39,7 +38,6 @@ function locationCoords(input) {
   const cityName = input;
   const limit = "1";
   //Geo API fetch request
-  //fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${cityName},${stateCode},${countryCode}&limit=${limit}&appid=${APIKey}`)
   fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=${limit}&appid=${APIKey}`)
     .then((res) => res.json())
     .then((data) => {
@@ -49,6 +47,9 @@ function locationCoords(input) {
       //Calls the weather functions
       currentWeather(lat, lon);
       futureWeather(lat, lon);
+    })
+    .catch((error) => {
+      console.log(error, "error");
     });
 }
 
@@ -144,9 +145,12 @@ function futureWeather(lat, lon) {
         const humidity = res.list[i].main.humidity;
         $("#weatherDataNum" + i).append(`<p class=marginAdjustment>Humidity: ${humidity}%</p>`);
       }
+    })
+    .catch((error) => {
+      console.log(error);
     });
 }
-//Stores the User's search into local storage
+//Stores the User's search into local storage.
 function storeSearchHistory(userSearch) {
   let weatherSearchHistory = JSON.parse(localStorage.getItem("weatherSearch"));
   let newSearch = false;
@@ -210,6 +214,7 @@ function resetPage() {
   $("#alignCircle").html("");
 }
 
+//Gets the current day's weather for the searched city/location.
 function currentWeather(lat, lon) {
   fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${APIKey}`)
     .then((res) => res.json())
@@ -238,5 +243,8 @@ function currentWeather(lat, lon) {
       //Wind Speed
       const windSpeed = data.wind.speed;
       $("#todaysWeather").append(`<p class="marginAdjustment subText">Wind: ${windSpeed} MPH</p>`);
+    })
+    .catch((error) => {
+      console.log(error);
     });
 }

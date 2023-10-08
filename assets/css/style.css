@@ -11,8 +11,6 @@ body {
   background-color: var(--background);
 }
 
-/* 200-700 */
-
 h1 {
   font-size: 128px;
   display: flex;
@@ -68,17 +66,12 @@ footer {
   margin-left: 5px;
 }
 
-/* .weatherLogs {
-  display: flex;
-} */
-
 .unitInstance {
   display: flex;
   flex-direction: row;
   align-items: center;
   background-color: darkcyan;
   border: solid;
-  /* border-color: ; */
 }
 
 img {
