@@ -142,11 +142,10 @@ function futureWeather(lat, lon) {
         $("#weatherDataNum" + i).append(`<p>Wind: ${windSpeed} MPH</p>`);
         //Humidity
         const humidity = res.list[i].main.humidity;
-        $("#weatherDataNum" + i).append(`<p>Humidity: ${humidity}%</p>`);
+        $("#weatherDataNum" + i).append(`<p class=marginAdjustment>Humidity: ${humidity}%</p>`);
       }
     });
 }
-
 //Stores the User's search into local storage
 function storeSearchHistory(userSearch) {
   let weatherSearchHistory = JSON.parse(localStorage.getItem("weatherSearch"));
@@ -171,12 +170,14 @@ function storeSearchHistory(userSearch) {
 //Creates a button list of previous searches.
 function searchHistoryButtons() {
   let weatherSearchHistory = JSON.parse(localStorage.getItem("weatherSearch"));
+  if (weatherSearchHistory == null) {
+    return;
+  }
   for (i = 0; weatherSearchHistory.length > i; i++) {
     let search = weatherSearchHistory[i];
-    $("#searchHistory").append(`<button id=button${i}>${search}</button>`);
+    $("#searchHistory").append(`<button id=button${i} class=button>${search}</button>`);
     $("#button" + i).on("click", function () {
       let input = $(this).html();
-      console.log(input, "input");
       resetPage();
       storeSearchHistory(input);
       for (i = 0; i < input.length; i++) {
@@ -215,10 +216,9 @@ function currentWeather(lat, lon) {
     .then((data) => {
       $("#currentDayDisplay").removeClass("hidden");
       console.log(data, "Today's Weather Data");
-      // $("#todaysWeather").append(`<div id=${location} class=unitInstance></div>`);
       //Date
       const currentDate = new Date();
-      const printDate = currentDate.getMonth() + 1 + "/" + currentDate.getDate();
+      const printDate = "Today: " + (currentDate.getMonth() + 1) + "/" + currentDate.getDate();
       $("#todaysDate").append(`${printDate}`);
       $("#alignCircle").append(`${printDate}`);
       //Icon
@@ -226,7 +226,7 @@ function currentWeather(lat, lon) {
       const imageAlt = data.weather[0].main;
       const weatherDescription = data.weather[0].description;
       $("#todaysWeather").append(
-        `<div class="weatherIconAndLabel mainIconAndLabel"><img src=https://openweathermap.org/img/w/${weatherIconCode}.png alt=${imageAlt}> <p>(${weatherDescription})</p></div>`
+        `<div class="weatherIconAndLabel mainIconAndLabel"><img src=https://openweathermap.org/img/w/${weatherIconCode}.png alt=${imageAlt}> <p class=subText>(${weatherDescription})</p></div>`
       );
       //Temperature
       const celsius = Math.round(data.main.temp - 273.15);
@@ -234,9 +234,9 @@ function currentWeather(lat, lon) {
       $("#todaysWeather").append(`<div><p class="todaysTemperature marginAdjustment">${celsius}°C ${fahrenheit}°F</p></div>`);
       //Humidity
       const humidity = data.main.humidity;
-      $("#todaysWeather").append(`<p>Humidity: ${humidity}%</p>`);
+      $("#todaysWeather").append(`<p class=subText>Humidity: ${humidity}%</p>`);
       //Wind Speed
       const windSpeed = data.wind.speed;
-      $("#todaysWeather").append(`<p class=marginAdjustment>Wind: ${windSpeed} MPH</p>`);
+      $("#todaysWeather").append(`<p class="marginAdjustment subText">Wind: ${windSpeed} MPH</p>`);
     });
 }
