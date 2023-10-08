@@ -1,6 +1,7 @@
 # Weather-App
 
 By Shane Mindreau
+
 [Deployed Weather App](https://smindre1.github.io/Weather-App/)
 
 ## Description
