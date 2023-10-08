@@ -13,19 +13,16 @@ $("#submitBtn").on("click", function () {
 });
 
 //Fix the enter key event listener
-/*
+
 $("#searchBar").keypress(function (e) {
-  if (e == 13) {
+  if (e.originalEvent.code == "Enter") {
     let input = $("#searchBar").val();
-    for (i = 0; i < input.length; i++) {
-      if (input[i] === " ") {
-        input = input.replaceAll(" ", "+");
-      }
-      locationCoords(input);
-    }
+    resetPage();
+    storeSearchHistory(input);
+    searchHistoryButtons();
+    locationCoords(input);
   }
 });
-*/
 
 //This function grabs the coordinates of the User's city search and uses them to call functions for the current and forecasted weather.
 function locationCoords(input) {
